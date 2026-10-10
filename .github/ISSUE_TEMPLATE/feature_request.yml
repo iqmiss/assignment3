@@ -1,0 +1,21 @@
+name: Feature or method request
+description: Propose a new capability, test statistic or adapter
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What research need does this serve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+  - type: textarea
+    id: validity
+    attributes:
+      label: Effect on statistical validity, privacy or reproducibility
+      description: Does it change what the core sees, the FDR family, or the results hash?
