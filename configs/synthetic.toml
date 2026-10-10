@@ -1,0 +1,26 @@
+# Full k = 2 and k = 3 sweep on the synthetic registry.
+# Reproduce with:  hode run configs/synthetic.toml  &&  hode verify results/manifest.json
+
+[data]
+source = "synthetic"
+n = 21331          # size of the published registry D1
+base_rate = 0.0637 # recidivism rate of D1
+seed = 2026
+
+[search]
+orders = [2, 3]
+events_per_parameter = 10   # identifiability rule (Peduzzi et al., 1996)
+fdr = 0.05                  # Benjamini-Hochberg across every test in the run
+collapse = true             # merge rare levels when a term exceeds the budget
+hierarchical = true         # test a k-way term only if all its (k-1)-way subsets are significant
+# Fields that track administrative conviction status (article 1). Every result
+# is produced twice: with them ("all") and without them ("no-proxy").
+proxies = ["conviction_group", "crime_context_group", "registry_group"]
+min_cell = 10               # disclosure rule for any exported cell
+
+[stability]
+resamples = 200
+stability_seed = 7
+
+[output]
+dir = "../results"
