@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "HODE: higher-order determinant discovery on count tables"
+version: 0.1.0
+date-released: 2026-10-10
+license: MIT
+repository-code: "https://github.com/iqmiss/assignment3"
+authors:
+  - family-names: Aikumis
+    given-names: Aibek
+    affiliation: Astana IT University
+keywords:
+  - interaction detection
+  - logistic regression
+  - false discovery rate
+  - reproducibility
+  - administrative data
