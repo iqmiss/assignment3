@@ -1,0 +1,45 @@
+# --- Data: never commit records, real or synthetic exports ---------------
+# The registry and any future datasets stay in their approved environment.
+data/
+dataset*/
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.sav
+*.dta
+*.sqlite
+*.db
+# Generated run outputs (rebuild with `hode run configs/synthetic.toml`)
+results/
+
+# --- Out of scope for this repository -----------------------------------
+# The model-based track (LightGBM / SHAP / k-SII) is developed separately.
+*.ipynb
+*.pkl
+*.joblib
+*.lgb
+models/
+
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Editors / OS -----------------------------------------------------------
+.idea/
+.vscode/
+.claude/
+.DS_Store
+Thumbs.db
+~$*

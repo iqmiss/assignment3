@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hode"
+dynamic = ["version"]
+description = "Higher-order determinant discovery on count tables, with a parameter budget and FDR control"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Aibek Aikumis" }]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.1",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.6", "build>=1.2"]
+
+[project.scripts]
+hode = "hode.cli:main"
+
+[project.urls]
+Repository = "https://github.com/iqmiss/assignment3"
+Issues = "https://github.com/iqmiss/assignment3/issues"
+
+[tool.setuptools.dynamic]
+version = { attr = "hode.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+source = ["hode"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
