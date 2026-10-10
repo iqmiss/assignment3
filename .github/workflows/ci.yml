@@ -52,7 +52,7 @@ jobs:
         run: pytest --cov --cov-report=term-missing --cov-report=xml
       - name: Upload coverage report
         if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-xml
           path: coverage.xml
@@ -73,7 +73,7 @@ jobs:
       - name: Rerun from the manifest and compare hashes
         run: hode verify results/manifest.json
       - name: Publish results and manifest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: synthetic-run
           path: results/
@@ -89,7 +89,7 @@ jobs:
           python-version: "3.12"
       - run: pip install build
       - run: python -m build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
