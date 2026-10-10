@@ -133,12 +133,18 @@ triple (region × occupation_group × age_group: young and unemployed, in two
 regions). Every other combination is null.
 
 * **Null data:** no false discoveries in any of the 165 tests, across 5 seeds.
-* **n = 21,331:** the pair is found. The triple is **not** recoverable, because
-  power runs out before k = 3. This is the risk Assignment 1 put at the top of
-  its register.
-* **n = 50,000** (the size the client inquiry requires): the triple is
-  recovered in most seeds, and it survives removal of the proxy fields.
-  `scripts/power_curve.py` measures the detection rate against sample size.
+* **Detection rate of the planted triple** (gated search, 20 seeds per size,
+  `scripts/power_curve.py`):
+
+  | n | 21,331 (registry D1) | 30,000 | 40,000 | 50,000 (client minimum) | 75,000 |
+  |---|---|---|---|---|---|
+  | triple found | 4/20 | 9/20 | 14/20 | **17/20** | 20/20 |
+  | other triples declared significant | 0 | 0 | 0 | 0 | 0 |
+
+  At the size of the published registry, power usually runs out before k = 3.
+  This is the risk Assignment 1 put at the top of its register. At the
+  50,000 records the client asked for, the triple is recovered in 85 % of
+  draws, and it survives removal of the proxy fields.
 
 ## Technology choices
 
