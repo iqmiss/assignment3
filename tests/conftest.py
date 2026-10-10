@@ -16,7 +16,7 @@ def d1_source():
 def d2_source():
     """Synthetic registry at the size the client asked for (n = 50,000).
 
-    At this size the gated search recovers the planted triple in roughly 80 % of
+    At this size the gated search recovers the planted triple in 17 of 20
     seeds (see scripts/power_curve.py), so the fixture pins a seed where it does:
     the test checks the engine, not the luck of the draw.
     """

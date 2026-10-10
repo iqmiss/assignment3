@@ -57,7 +57,8 @@ def test_hierarchical_gating_skips_triples_with_a_non_significant_pair(d2_result
 
 
 def test_planted_triple_is_not_identifiable_at_registry_d1_size(d1_source):
-    """At n = 21,331 power runs out before k = 3: the engine reports no triple."""
+    """At n = 21,331 power usually runs out before k = 3 (4/20 seeds recover the
+    triple); with the default seed the engine reports no triple and no false one."""
     result = run_search(d1_source, SearchConfig(resamples=0))
     assert _significant(result, 3) == set()
     assert PAIR in _significant(result, 2)
