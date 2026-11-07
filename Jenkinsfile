@@ -39,7 +39,8 @@ pipeline {
     environment {
         IMAGE_TAG = "${env.GIT_COMMIT ? env.GIT_COMMIT.substring(0, 7) : env.BUILD_NUMBER}"
         LOCAL_IMAGE = "hode:${IMAGE_TAG}"
-        VENV = "${WORKSPACE}/.venv"
+        VENV = "${JENKINS_HOME}/venvs/hode-ci"
+        PIP_CACHE_DIR = "${JENKINS_HOME}/pip-cache"
     }
 
     stages {
@@ -52,10 +53,13 @@ pipeline {
 
         stage('Set up Python') {
             steps {
+                // Venv and pip cache live in jenkins_home, so later builds reuse them;
+                // retries and resumable downloads survive short network drops.
                 sh '''
-                    python3 -m venv "$VENV"
-                    "$VENV/bin/pip" install --quiet --upgrade pip
-                    "$VENV/bin/pip" install --quiet -e ".[dev]"
+                    [ -x "$VENV/bin/python" ] || python3 -m venv "$VENV"
+                    "$VENV/bin/pip" install --quiet --retries 10 --timeout 60 --upgrade pip
+                    "$VENV/bin/pip" install --quiet --retries 10 --timeout 60 --resume-retries 10 \
+                        -e ".[dev]"
                     "$VENV/bin/python" --version
                 '''
             }
