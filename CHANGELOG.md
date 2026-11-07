@@ -4,6 +4,18 @@ All notable changes are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Multi-stage `Dockerfile` (builder, test, runtime) with pinned runtime
+  libraries in `requirements.lock`; non-root runtime image whose default
+  command runs the synthetic sweep and `hode verify`.
+- `Jenkinsfile`: lint, unit tests with JUnit and coverage, image build,
+  in-container smoke test, optional Docker Hub push and Kubernetes deploy.
+- `jenkins/`: Jenkins LTS server with Configuration as Code (Docker Compose).
+- `k8s/` Job manifest and `scripts/deploy_minikube.sh`.
+- `docker.yml` GitHub Actions workflow that builds, tests and publishes the image.
+
 ## [0.1.0] - 2026-10-10
 
 First public increment (cycle 2 of the HODE plan).

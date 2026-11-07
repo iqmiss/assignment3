@@ -1,0 +1,24 @@
+# Local Jenkins server for the HODE pipeline.
+#   cd jenkins && docker compose up -d --build
+#   open http://localhost:8080  (admin / admin unless set in jenkins/.env)
+services:
+  jenkins:
+    build: .
+    image: hode-jenkins:lts
+    container_name: hode-jenkins
+    # root only so the container can use the host Docker socket; fine for a
+    # local lab machine, not for a shared server.
+    user: root
+    ports:
+      - "8080:8080"
+    environment:
+      JENKINS_ADMIN_ID: ${JENKINS_ADMIN_ID:-admin}
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-admin}
+      HODE_REPO_URL: ${HODE_REPO_URL:-https://github.com/iqmiss/assignment3.git}
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:

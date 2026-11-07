@@ -1,0 +1,32 @@
+# One reproducible HODE analysis as a Kubernetes Job (batch work, so a Job,
+# not a Deployment). IMAGE_PLACEHOLDER is replaced by the pipeline or the script.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hode-analysis
+  namespace: hode
+  labels: { app: hode }
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels: { app: hode }
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: hode
+          image: IMAGE_PLACEHOLDER
+          imagePullPolicy: IfNotPresent
+          args: ["hode-pipeline", "configs/synthetic.toml"]
+          resources:
+            requests: { cpu: "500m", memory: "512Mi" }
+            limits:   { cpu: "2",    memory: "2Gi" }
+          volumeMounts:
+            - { name: results, mountPath: /app/results }
+      volumes:
+        - name: results
+          emptyDir: {}

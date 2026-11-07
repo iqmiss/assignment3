@@ -170,6 +170,44 @@ regions). Every other combination is null.
   a reproducibility manifest, and publishes a GitHub Release with everything
   attached.
 * **Dependabot** checks the actions and dependencies monthly.
+* **`docker.yml`** builds the Docker image on every push, runs the test
+  suite inside it, runs the synthetic sweep plus `hode verify` in the
+  container, and publishes the image to `ghcr.io` from `main`.
+
+## Containers, Jenkins and Kubernetes
+
+Why: a manifest written on Windows with numpy 2.4.6 does **not** pass
+`hode verify` on Linux with numpy 2.5.4. Four of 221 likelihood-ratio
+statistics differ by 1e-10, so the results hash changes although every
+conclusion is the same. The image fixes Python and every library
+(`requirements.lock`), so a run inside it verifies anywhere.
+
+```bash
+docker build -t hode:local .                  # multi-stage: builder -> test -> runtime
+docker run --rm hode:local                    # hode run + hode verify, exits non-zero on mismatch
+docker run --rm -v "$PWD/out:/app/results" hode:local   # keep results on the host
+docker build --target test .                  # lint + 53 tests inside the container
+```
+
+**Jenkins.** The `Jenkinsfile` runs on every commit (SCM polling every
+~2 minutes): checkout → Python set-up → lint → unit tests (JUnit report,
+coverage gate) → Docker image build → in-container smoke test with
+`hode verify` → optional push to Docker Hub → optional Kubernetes deploy.
+A ready Jenkins server is in `jenkins/` (plugins and the `hode-ci` job are
+created by Configuration as Code, no setup wizard):
+
+```bash
+cd jenkins && docker compose up -d --build
+# open http://localhost:8080, log in as admin / admin, open hode-ci, Build Now
+```
+
+To push images, add a Docker Hub *Username with password* credential with
+id `dockerhub` (password = access token) and run with `PUSH_IMAGE` ticked.
+
+**Kubernetes (Minikube).** `k8s/job.yaml` runs one analysis as a Job.
+From your machine: `minikube start && sh scripts/deploy_minikube.sh`.
+From Jenkins: add the kubeconfig as a *Secret file* credential with id
+`kubeconfig` and tick `PUSH_IMAGE` and `DEPLOY_K8S`.
 
 ## Roadmap
 
