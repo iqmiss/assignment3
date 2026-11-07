@@ -1,0 +1,25 @@
+# Keep the build context small and never send data into an image.
+.git
+.github
+.venv
+venv
+**/__pycache__
+**/*.py[cod]
+*.egg-info
+.pytest_cache
+.ruff_cache
+.coverage
+coverage.xml
+build
+dist
+results
+data
+dataset*
+*.csv
+*.xlsx
+*.parquet
+*.ipynb
+jenkins
+k8s
+*.pdf
+*.docx

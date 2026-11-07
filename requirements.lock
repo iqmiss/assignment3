@@ -1,0 +1,7 @@
+# Exact runtime versions used in the Docker image (tested with Python 3.13).
+# Update deliberately: change a pin, rebuild, and let CI rerun `hode verify`.
+numpy==2.5.4
+scipy==1.18.1
+pandas==3.1.1
+python-dateutil==4.0.0
+tzdata==2026.6

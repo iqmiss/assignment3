@@ -1,0 +1,37 @@
+# Jenkins Configuration as Code: the whole server is described in this file,
+# so it can be rebuilt from scratch with one command.
+jenkins:
+  systemMessage: "HODE CI/CD - Assignment 5 (Applied Software Development Project)"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_ID:-admin}"
+          password: "${JENKINS_ADMIN_PASSWORD:-admin}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+
+jobs:
+  - script: |
+      pipelineJob('hode-ci') {
+        description('Lint, unit tests, Docker image build and in-container reproducibility check for HODE.')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('${HODE_REPO_URL:-https://github.com/iqmiss/assignment3.git}') }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight(true)
+          }
+        }
+        // Polling (every ~2 min) is declared in the Jenkinsfile and becomes active after the first build.
+      }
