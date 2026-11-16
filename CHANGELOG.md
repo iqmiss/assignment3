@@ -7,6 +7,10 @@ All notable changes are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- `hode plot`: a heatmap of the outcome rate per cell for every significant
+  pair of a run, with the highest-risk cell outlined and cells below
+  `min_cell` left blank. matplotlib is an optional extra (`hode[plot]`).
+- `load_manifest()`, shared by `hode verify` and `hode plot`.
 - Multi-stage `Dockerfile` (builder, test, runtime) with pinned runtime
   libraries in `requirements.lock`; non-root runtime image whose default
   command runs the synthetic sweep and `hode verify`.

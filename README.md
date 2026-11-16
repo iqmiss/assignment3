@@ -79,7 +79,8 @@ pip install -e ".[dev]"
 
 hode run configs/synthetic.toml        # k = 2, 3 sweep on the synthetic registry
 hode verify results/manifest.json      # rerun from the manifest, compare hashes
-pytest --cov                           # 53 tests, coverage gate 80 %
+hode plot results/manifest.json        # one heatmap per significant pair -> results/plots/
+pytest --cov                           # 57 tests, coverage gate 80 %
 ```
 
 On your own (de-identified, categorical) data:
@@ -119,6 +120,12 @@ dir = "results"
 | `boundary` | some reduced-model margin has zero events (the LRT is still valid; read with care) |
 | `stability` | share of bootstrap resamples that stay significant |
 | `top_cell`, `top_cell_n`, `top_cell_rate`, `top_cell_ci_low/high`, `top_cell_lift` | subgroup profile, released only if n ≥ `min_cell` |
+
+`hode plot` (needs `pip install "hode[plot]"`, which adds matplotlib) rebuilds
+the count tables from the manifest and draws, for every significant pair, the
+outcome rate in each cell as a heatmap, with the highest-risk cell outlined.
+Cells smaller than `min_cell` are left blank, so a figure discloses no more
+than `results.csv`.
 
 `manifest.json` records the configuration, the data fingerprint
 (order-independent SHA-256), the package versions and the SHA-256 of the
@@ -186,7 +193,7 @@ conclusion is the same. The image fixes Python and every library
 docker build -t hode:local .                  # multi-stage: builder -> test -> runtime
 docker run --rm hode:local                    # hode run + hode verify, exits non-zero on mismatch
 docker run --rm -v "$PWD/out:/app/results" hode:local   # keep results on the host
-docker build --target test .                  # lint + 53 tests inside the container
+docker build --target test .                  # lint + tests inside the container (no matplotlib there: the plot test is skipped)
 ```
 
 **Jenkins.** The `Jenkinsfile` runs on every commit (SCM polling every

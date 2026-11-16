@@ -115,8 +115,10 @@ def run(config: RunConfig) -> tuple[pd.DataFrame, dict]:
     return frame, manifest
 
 
-def verify(manifest_path: str | Path, data_path: str | Path | None = None) -> list[str]:
-    """Rerun the analysis recorded in a manifest; return a list of mismatches (empty = OK)."""
+def load_manifest(
+    manifest_path: str | Path, data_path: str | Path | None = None
+) -> tuple[dict, RunConfig]:
+    """Read a manifest and rebuild the run configuration it records."""
     manifest_path = Path(manifest_path)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     cfg = manifest["config"]
@@ -126,7 +128,12 @@ def verify(manifest_path: str | Path, data_path: str | Path | None = None) -> li
             raise ValueError("this manifest was produced from a CSV; pass its path with --data")
         data["path"] = str(Path(data_path).resolve())
     search = _tuples(dict(cfg["search"]))
-    config = RunConfig(data, SearchConfig(**search), manifest_path.parent)
+    return manifest, RunConfig(data, SearchConfig(**search), manifest_path.parent)
+
+
+def verify(manifest_path: str | Path, data_path: str | Path | None = None) -> list[str]:
+    """Rerun the analysis recorded in a manifest; return a list of mismatches (empty = OK)."""
+    manifest, config = load_manifest(manifest_path, data_path)
     source = config.source()
     problems = []
     if source.fingerprint() != manifest["data_fingerprint"]:
