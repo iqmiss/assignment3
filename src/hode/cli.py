@@ -1,4 +1,4 @@
-"""Command-line interface: ``hode synth``, ``hode run``, ``hode verify``."""
+"""Command-line interface: ``hode synth``, ``hode run``, ``hode verify``, ``hode plot``."""
 
 from __future__ import annotations
 
@@ -28,7 +28,26 @@ def main(argv: list[str] | None = None) -> int:
     p_verify.add_argument("manifest", type=Path)
     p_verify.add_argument("--data", type=Path, default=None, help="CSV path for CSV-based runs")
 
+    p_plot = sub.add_parser("plot", help="draw a heatmap for every significant pair of a run")
+    p_plot.add_argument("manifest", type=Path)
+    p_plot.add_argument("--data", type=Path, default=None, help="CSV path for CSV-based runs")
+    p_plot.add_argument("--out", type=Path, default=None, help="default: plots/ next to it")
+    p_plot.add_argument("--variant", default="all", help="'all' or 'no-proxy'")
+
     args = parser.parse_args(argv)
+
+    if args.command == "plot":
+        try:
+            from hode.plot import plot_run
+
+            paths = plot_run(args.manifest, args.out, args.data, args.variant)
+        except ImportError:
+            print('hode plot needs matplotlib: pip install "hode[plot]"', file=sys.stderr)
+            return 2
+        print(f"{len(paths)} heatmaps written")
+        for path in paths:
+            print(f"  {path}")
+        return 0
 
     if args.command == "synth":
         frame = generate(SyntheticSpec(n=args.n, seed=args.seed))
