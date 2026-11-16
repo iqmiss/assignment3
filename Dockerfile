@@ -3,7 +3,7 @@
 # HODE container image.
 #
 #   docker build -t hode:local .
-#   docker run --rm hode:local                          # synthetic k = 2, 3 sweep + verify
+#   docker run --rm hode:local                          # synthetic k = 2, 3 sweep + verify + plot
 #   docker run --rm hode:local hode --version
 #   docker run --rm -v "$PWD/out:/app/results" hode:local   # keep the results on the host
 #
@@ -14,7 +14,8 @@
 #   runtime  - small image with only the wheel and the pinned runtime libraries
 #
 # The runtime libraries are pinned in requirements.lock, so the image built
-# today and the image built in a year contain the same numpy/scipy/pandas.
+# today and the image built in a year contain the same numpy/scipy/pandas
+# (and matplotlib, which hode plot uses to draw the heatmaps).
 
 ARG PYTHON_VERSION=3.13
 
@@ -49,7 +50,8 @@ LABEL org.opencontainers.image.title="hode" \
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    MPLCONFIGDIR=/tmp/matplotlib
 
 WORKDIR /app
 COPY requirements.lock ./
@@ -70,5 +72,5 @@ RUN useradd --create-home --uid 10001 hode \
 USER 10001
 
 VOLUME ["/app/results"]
-# Default: the reproducible synthetic sweep, then the hash check.
+# Default: the reproducible synthetic sweep, the hash check, then the heatmaps.
 CMD ["hode-pipeline", "configs/synthetic.toml"]
