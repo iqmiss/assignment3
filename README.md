@@ -191,15 +191,17 @@ conclusion is the same. The image fixes Python and every library
 
 ```bash
 docker build -t hode:local .                  # multi-stage: builder -> test -> runtime
-docker run --rm hode:local                    # hode run + hode verify, exits non-zero on mismatch
-docker run --rm -v "$PWD/out:/app/results" hode:local   # keep results on the host
-docker build --target test .                  # lint + tests inside the container (no matplotlib there: the plot test is skipped)
+docker run --rm hode:local                    # hode run + hode verify + hode plot, non-zero on mismatch
+docker run --rm -v "$PWD/out:/app/results" hode:local   # keep results and heatmaps (out/plots/)
+docker build --target test .                  # lint + all tests inside the container
 ```
 
 **Jenkins.** The `Jenkinsfile` runs on every commit (SCM polling every
 ~2 minutes): checkout → Python set-up → lint → unit tests (JUnit report,
 coverage gate) → Docker image build → in-container smoke test with
-`hode verify` → optional push to Docker Hub → optional Kubernetes deploy.
+`hode verify` and `hode plot` → optional push to Docker Hub → optional
+Kubernetes deploy. Each build archives `results.csv`, `manifest.json` and the
+heatmaps (`results/plots/*.png`), so they open from the build page.
 A ready Jenkins server is in `jenkins/` (plugins and the `hode-ci` job are
 created by Configuration as Code, no setup wizard):
 

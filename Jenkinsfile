@@ -5,7 +5,7 @@
 //   2. Lint            - ruff (style and common bugs)
 //   3. Unit tests      - pytest, JUnit report, coverage gate 80 %
 //   4. Build image     - docker build (multi-stage, pinned libraries)
-//   5. Smoke test      - run the synthetic sweep inside the image + hode verify
+//   5. Smoke test      - run the synthetic sweep inside the image + hode verify + hode plot
 //   6. Push            - optional, to Docker Hub (needs the 'dockerhub' credential)
 //   7. Deploy          - optional, Kubernetes Job on Minikube (needs 'kubeconfig')
 //
@@ -99,7 +99,7 @@ pipeline {
 
         stage('Smoke test in container') {
             steps {
-                // Default command = hode run configs/synthetic.toml && hode verify
+                // Default command = hode run, hode verify, hode plot (heatmaps in results/plots/)
                 sh '''
                     docker rm -f "hode-smoke-$BUILD_NUMBER" 2>/dev/null || true
                     docker run --name "hode-smoke-$BUILD_NUMBER" "$LOCAL_IMAGE"
@@ -107,7 +107,7 @@ pipeline {
                     docker cp "hode-smoke-$BUILD_NUMBER:/app/results/." results/
                     docker rm "hode-smoke-$BUILD_NUMBER"
                 '''
-                archiveArtifacts artifacts: 'results/*', fingerprint: true
+                archiveArtifacts artifacts: 'results/**', fingerprint: true
             }
         }
 

@@ -1,5 +1,6 @@
 # Container CI (GitHub Actions mirror of the Jenkinsfile, for reviewers without Jenkins).
-# Every push: test stage inside Docker, runtime image build, in-container run + hode verify.
+# Every push: test stage inside Docker, runtime image build, in-container run + hode verify
+# + hode plot; the results and heatmaps are kept as the "container-run" artifact.
 # Pushes to main also publish the image to GitHub Container Registry (ghcr.io).
 name: Docker
 
@@ -27,8 +28,17 @@ jobs:
       - name: Build the runtime image
         run: docker build --target runtime -t hode:${{ github.sha }} .
 
-      - name: Smoke test - synthetic sweep and hash verification in the container
-        run: docker run --rm hode:${{ github.sha }}
+      - name: Smoke test - synthetic sweep, hash verification and heatmaps in the container
+        run: |
+          mkdir -p out && chmod 777 out
+          docker run --rm -v "$PWD/out:/app/results" hode:${{ github.sha }}
+          ls out out/plots
+
+      - name: Publish the container's results and heatmaps
+        uses: actions/upload-artifact@v4
+        with:
+          name: container-run
+          path: out/
 
       - name: Log in to ghcr.io
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

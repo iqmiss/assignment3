@@ -11,6 +11,10 @@ All notable changes are recorded here. The format follows
   pair of a run, with the highest-risk cell outlined and cells below
   `min_cell` left blank. matplotlib is an optional extra (`hode[plot]`).
 - `load_manifest()`, shared by `hode verify` and `hode plot`.
+- The pipelines now draw the heatmaps: the container runs `hode plot` after
+  `hode verify` (matplotlib pinned in `requirements.lock`), Jenkins archives
+  `results/**` including `results/plots/`, and GitHub Actions keeps them as the
+  `synthetic-run` and `container-run` artifacts.
 - Multi-stage `Dockerfile` (builder, test, runtime) with pinned runtime
   libraries in `requirements.lock`; non-root runtime image whose default
   command runs the synthetic sweep and `hode verify`.

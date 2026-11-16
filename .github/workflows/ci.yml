@@ -67,12 +67,14 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install .
+      - run: pip install ".[plot]"
       - name: Run the synthetic k = 2, 3 sweep
         run: hode run configs/synthetic.toml
       - name: Rerun from the manifest and compare hashes
         run: hode verify results/manifest.json
-      - name: Publish results and manifest
+      - name: Draw a heatmap for every significant pair
+        run: hode plot results/manifest.json
+      - name: Publish results, manifest and heatmaps
         uses: actions/upload-artifact@v4
         with:
           name: synthetic-run
